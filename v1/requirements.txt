@@ -9,3 +9,4 @@ pillow
 matplotlib
 seaborn
 tensorboard
+wandb

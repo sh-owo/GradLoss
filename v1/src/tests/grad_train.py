@@ -16,7 +16,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.insert(0, src_dir)
 
-from src.GradLoss.gradloss import GradLoss
+from v1.src.GradLoss.gradloss import GradLoss
 
 
 class COCODataset(Dataset):
