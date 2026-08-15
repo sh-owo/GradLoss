@@ -15,6 +15,10 @@ class GradLoss(nn.Module):
         eps: float = 1e-6,
     ):
         super(GradLoss, self).__init__()
+        if target_layer is None:
+            raise ValueError(
+                "target_layer must be specified"
+            )
         self.target_layer = target_layer
         self.ce_loss = nn.CrossEntropyLoss()
 
