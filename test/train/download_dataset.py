@@ -11,16 +11,25 @@ import torchvision.datasets as tv_datasets
 from train.prepare_dataset import CUB_DIR, CUB_URL
 
 
-def _download(url, dest):
-    def report(blocks, bs, total):
-        done = blocks * bs
-        if total > 0:
-            pct = min(100.0, done * 100.0 / total)
-            sys.stdout.write(f"\r  {pct:5.1f}% ({done/1e6:.1f}/{total/1e6:.1f} MB)")
-            sys.stdout.flush()
+BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
 
+
+def _download(url, dest):
+    req = urllib.request.Request(
+        url,
+        headers={"User-Agent": BROWSER_UA},
+    )
     print(f"downloading {url}")
-    urllib.request.urlretrieve(url, dest, reporthook=report)
+    with urllib.request.urlopen(req) as r, open(dest, "wb") as f:
+        total = int(r.headers.get("Content-Length", 0))
+        done = 0
+        while chunk := r.read(1 << 20):
+            f.write(chunk)
+            done += len(chunk)
+            if total > 0:
+                pct = min(100.0, done * 100.0 / total)
+                sys.stdout.write(f"\r  {pct:5.1f}% ({done/1e6:.1f}/{total/1e6:.1f} MB)")
+                sys.stdout.flush()
     print()
 
 
