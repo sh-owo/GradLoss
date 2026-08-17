@@ -146,7 +146,7 @@ def generate_cam_compare(cfg, out_root):
                 cam_np = EvalCAM(model, target_layer)(image1)[0]
                 cams[loss] = upsample_to(cam_np, (size, size)).squeeze().numpy()
 
-            fig, axes = plt.subplots(2, 4, figsize=(20, 10))
+            fig, axes = plt.subplots(2, 3, figsize=(15, 10))
             for r, loss in enumerate(("ce", "gradloss")):
                 pred, conf = preds[loss], confs[loss]
                 axes[r][0].set_ylabel(
@@ -160,11 +160,8 @@ def generate_cam_compare(cfg, out_root):
                 _mask_overlay(axes[r][1], display_img, mask_arr)
                 axes[r][1].set_title("mask")
 
-                _cam_overlay(axes[r][2], cams["ce"], display_img)
-                axes[r][2].set_title("CE GradCAM")
-
-                _cam_overlay(axes[r][3], cams["gradloss"], display_img)
-                axes[r][3].set_title("GradLoss GradCAM")
+                _cam_overlay(axes[r][2], cams[loss], display_img)
+                axes[r][2].set_title(f"{loss.capitalize()} GradCAM")
 
             correct = {loss: (preds[loss] == label) for loss in ("ce", "gradloss")}
             fig.suptitle(
