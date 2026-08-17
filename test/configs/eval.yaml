@@ -4,6 +4,8 @@ defaults:
   - trainer: default
   - _self_
 
+run_dir: null
+
 hydra:
   run:
     dir: runs/eval/${model.name}/${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}
