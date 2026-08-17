@@ -124,3 +124,10 @@ dmypy.json
 .pyre/
 
 .idea/
+
+# Datasets
+/data/
+
+# Experiment outputs
+/checkpoints/
+/runs/
