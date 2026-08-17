@@ -1,8 +1,15 @@
 import csv
 import json
 import os
+import sys
 from collections import defaultdict
 from pathlib import Path
+
+_TEST = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_REPO = os.path.dirname(_TEST)
+for _p in (_REPO, _TEST):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import numpy as np
 
@@ -41,7 +48,7 @@ def _ema(values, span):
 
 
 def _load_class_names(run_cfg):
-    from train.prepare_dataset import CUB_DIR, _resolve_root
+    from train.prepare_dataset import CUB_DIR
 
     def _resolve(root):
         try:
