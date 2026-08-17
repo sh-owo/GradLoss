@@ -89,7 +89,8 @@ def evaluate_run(cfg, model, target_layer, device, loader, has_attention, steps=
                 if plist:
                     from PIL import Image
                     orig = Image.open(parts.image_path(idx)).size
-                    part_images.append((cam, plist, orig))
+                    cam_full = upsample_to(cam, tuple(images.shape[-2:])).squeeze().numpy()
+                    part_images.append((cam_full, plist, orig))
             global_idx += 1
 
     preds = np.concatenate(preds)
