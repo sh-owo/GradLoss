@@ -128,7 +128,7 @@ class OxfordPet(Dataset):
     def __getitem__(self, idx):
         image, (label, seg) = self.ds[idx]
         arr = np.asarray(seg)
-        obj = (arr != 2).astype(np.uint8) # fg + border
+        obj = (arr != 3).astype(np.uint8) # fg + border
         mask = _mask_to_pil(obj)
         if self.transform:
             image, mask = self.transform(image, mask)
