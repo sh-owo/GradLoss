@@ -25,6 +25,3 @@ iou_threshold: 0.7
 seeds: [1337, 42, 67, 3, 451]
 losses: [ce, gradloss]
 checkpoint_root: ./checkpoints
-
-samples: 50
-faithfulness_steps: 6

@@ -6,6 +6,10 @@ defaults:
 
 run_dir: null
 
+samples: 50
+faithfulness_steps: 6
+ema_span: 20
+
 hydra:
   run:
     dir: runs/eval/${model.name}/${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}

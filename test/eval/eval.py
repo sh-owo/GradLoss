@@ -67,12 +67,12 @@ def run_eval(cfg):
             m, pc, subs, part_imgs = evaluate_run(
                 cfg, model, target_layer, device, loader,
                 has_attention=True,
-                steps=cfg.trainer.faithfulness_steps,
-                samples=cfg.trainer.samples,
+                steps=cfg.faithfulness_steps,
+                samples=cfg.samples,
                 parts=parts,
             )
             removal, insertion = faithfulness(cfg, model, target_layer, device,
-                                              subs, cfg.trainer.faithfulness_steps)
+                                              subs, cfg.faithfulness_steps)
             pcover = part_metrics(part_imgs) if part_imgs else None
 
             vals = dict(m, removal_auc=removal, insertion_auc=insertion,
