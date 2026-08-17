@@ -9,6 +9,7 @@ run_dir: null
 samples: 50
 faithfulness_steps: 6
 ema_span: 20
+cam_samples: 8
 
 hydra:
   run:

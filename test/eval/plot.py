@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 import hydra
 from omegaconf import DictConfig
 
+from eval.classes import load_class_names
+
 CLASSES_PER_PLOT = 20
 STEP_METRICS = ["acc", "loss_total", "loss_ce", "loss_attn", "p_obj", "p_noobj", "lr"]
 
@@ -48,47 +50,7 @@ def _ema(values, span):
 
 
 def _load_class_names(run_cfg):
-    from train.prepare_dataset import CUB_DIR
-
-    def _resolve(root):
-        try:
-            from hydra.utils import get_original_cwd
-            original = get_original_cwd()
-        except Exception:
-            original = os.getcwd()
-        if not os.path.isabs(root):
-            root = os.path.join(original, root)
-        return root
-
-    ds = run_cfg.dataset
-    root = _resolve(ds.root)
-    if ds.name == "cub":
-        path = os.path.join(root, CUB_DIR, "classes.txt")
-        names = []
-        if os.path.exists(path):
-            with open(path) as f:
-                for line in f:
-                    parts = line.strip().split(None, 1)
-                    if len(parts) != 2:
-                        continue
-                    idx = int(parts[0]) - 1
-                    raw = parts[1].strip()
-                    name = raw.split(".", 1)[-1] if "." in raw else raw
-                    while len(names) <= idx:
-                        names.append("")
-                    names[idx] = name
-        return names
-    if ds.name == "pet":
-        import torchvision.datasets as tv_datasets
-
-        try:
-            dataset = tv_datasets.OxfordIIITPet(
-                root=root, split="trainval", target_types="category", download=False
-            )
-            return list(dataset.classes)
-        except Exception:
-            return []
-    return []
+    return load_class_names(run_cfg)
 
 
 def _find_run_dir(cfg):
@@ -330,7 +292,15 @@ def generate_plots(cfg):
         plot_class_mean(class_rows, loss, seeds, num_classes, out, names)
         n_c += len(list(out.glob("chunk*.png")))
 
-    print(f"[plot] done. Class={n_a} Steps={n_b} Mean={n_c} → {plots_dir}")
+    n_cam = 0
+    try:
+        from eval.cam_compare import generate_cam_compare
+
+        n_cam = generate_cam_compare(cfg, out_root=plots_dir / "cam_compare")
+    except Exception as exc:
+        print(f"[plot] cam_compare skipped: {exc}")
+
+    print(f"[plot] done. Class={n_a} Steps={n_b} Mean={n_c} CamCompare={n_cam} -> {plots_dir}")
 
 
 def _load_run_cfg(run_dir):
