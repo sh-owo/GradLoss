@@ -22,7 +22,7 @@ def upsample_to(cam, size, mode="bilinear"):
 # 이진화 CAM vs mask IoU
 def attention_iou(cam, mask, threshold=0.7, eps=1e-6):
     cam_up = upsample_to(cam, tuple(mask.shape[-2:]))
-    mask = mask.float().squeeze()
+    mask = mask.detach().cpu().float().squeeze()
     bin_cam = (cam_up.squeeze() >= threshold).float()
     inter = (bin_cam * mask).sum().item()
     union = (bin_cam + mask > 0).float().sum().item()
@@ -33,7 +33,8 @@ def soft_p_obj_noobj(cam, mask, tau=5.0, eps=1e-6):
     cam = _to_tensor(cam)
     if cam.dim() == 2:
         cam = cam.unsqueeze(0)
-    mask = mask.float().squeeze(1) if mask.dim() == 4 else mask.float()
+    mask = mask.detach().cpu().float()
+    mask = mask.squeeze(1) if mask.dim() == 4 else mask
 
     if tuple(mask.shape[-2:]) != tuple(cam.shape[-2:]):
         mask = F.interpolate(mask.unsqueeze(1), size=cam.shape[-2:], mode="area")
