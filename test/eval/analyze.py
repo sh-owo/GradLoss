@@ -74,10 +74,9 @@ def evaluate_run(cfg, model, target_layer, device, loader, has_attention, steps=
         for k in range(images.size(0)):
             cam = cams[k]
             ious.append(attention_iou(cam, masks[k], cfg.trainer.iou_threshold))
-            if has_attention:
-                po, pn = soft_p_obj_noobj(cam, masks[k], cfg.trainer.tau, cfg.trainer.eps)
-                p_objs.append(po)
-                p_noobjs.append(pn)
+            po, pn = soft_p_obj_noobj(cam, masks[k], cfg.trainer.tau, cfg.trainer.eps)
+            p_objs.append(po)
+            p_noobjs.append(pn)
 
             if len(faithful_subs) < samples:
                 cam_up = upsample_to(cam, tuple(images.shape[-2:])).squeeze()

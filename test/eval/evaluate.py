@@ -28,10 +28,9 @@ def evaluate(model, loader, cfg, device, target_layer, has_attention):
         cams = eval_cam(images, labels) # (B, h, w) numpy, layer res
         for k in range(images.size(0)):
             ious.append(attention_iou(cams[k], masks[k], cfg.trainer.iou_threshold))
-            if has_attention:
-                po, pn = soft_p_obj_noobj(cams[k], masks[k], cfg.trainer.tau, cfg.trainer.eps)
-                p_objs.append(po)
-                p_noobjs.append(pn)
+            po, pn = soft_p_obj_noobj(cams[k], masks[k], cfg.trainer.tau, cfg.trainer.eps)
+            p_objs.append(po)
+            p_noobjs.append(pn)
 
     preds = np.concatenate(preds)
     labels_all = np.concatenate(labels_all)
