@@ -36,9 +36,9 @@ def _resolve_root(root):
 def build_optimizer(model, cfg):
     t = cfg.trainer
     if t.optimizer == "adam":
-        return torch.optim.Adam(model.parameters(), lr=t.lr, weight_decay=t.weight_decay)
+        return torch.optim.Adam(model.parameters(), lr=t.lr_peak, weight_decay=t.weight_decay)
     if t.optimizer == "sgd":
-        return torch.optim.SGD(model.parameters(), lr=t.lr, weight_decay=t.weight_decay, momentum=0.9, nesterov=True)
+        return torch.optim.SGD(model.parameters(), lr=t.lr_peak, weight_decay=t.weight_decay, momentum=0.9, nesterov=True)
     raise ValueError(f"unknown optimizer: {t.optimizer}")
 
 
@@ -46,12 +46,14 @@ def cosine_scheduler(optimizer, cfg):
     t = cfg.trainer
     warmup = max(1, t.warmup_epochs)
     total = max(warmup + 1, t.epochs)
+    floor_ratio = t.lr_end / t.lr_peak
 
     def lr_lambda(epoch):
         if epoch < warmup:
             return (epoch + 1) / warmup
         prog = (epoch - warmup) / (total - warmup)
-        return 0.5 * (1.0 + math.cos(math.pi * prog))
+        cosine = 0.5 * (1.0 + math.cos(math.pi * prog))
+        return floor_ratio + (1.0 - floor_ratio) * cosine
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
@@ -196,13 +198,15 @@ def _run_single(cfg, loss, make_criterion, step_fn, seed):
                 f"train_acc={train_stats['acc']:.4f} "
                 f"val_acc={val_stats['val_acc']:.4f} "
                 f"val_iou={val_stats['val_iou']:.4f} "
-                f"macro_f1={val_stats['macro_f1']:.4f}",
+                f"macro_f1={val_stats['macro_f1']:.4f} "
+                f"lr={optimizer.param_groups[0]['lr']:.6f}",
                 flush=True,
             )
         else:
             print(
                 f"[{epoch}] train_loss={train_stats['total']:.4f} "
-                f"train_acc={train_stats['acc']:.4f}",
+                f"train_acc={train_stats['acc']:.4f} "
+                f"lr={optimizer.param_groups[0]['lr']:.6f}",
                 flush=True,
             )
 
