@@ -1,0 +1,29 @@
+epochs: 100
+batch_size: 32
+num_workers: 4
+image_size: 224
+
+optimizer: adam
+lr: 0.001
+weight_decay: 0.0001
+warmup_epochs: 5
+grad_clip: 1.0
+
+log_interval: 20
+val_freq: 1
+resume: null
+out_dir: null
+
+tau: 5
+attn_weight: 0.5
+ce_weight: 1.0
+eps: 1e-6
+
+iou_threshold: 0.7
+
+seeds: [1337, 42, 67, 3, 451]
+losses: [ce, gradloss]
+checkpoint_root: ./checkpoints
+
+samples: 100
+faithfulness_steps: 10

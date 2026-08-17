@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gradloss"
+version = "0.1.1"
+description = ""
+authors = [
+    {name = "sh-owo"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "hydra-core>=1.3.5",
+    "omegaconf>=2.3.1",
+    "numpy>=2.2.6",
+    "pillow>=12.3.0",
+    "torch>=2.13.0",
+    "torchvision>=0.28.0",
+    "tqdm>=4.70.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["gradloss*"] 

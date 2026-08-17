@@ -1,32 +1,19 @@
 # GradLoss : GradCAM을 활용한 손실함수
 
-기본적인 CE Loss에 GradCAM을 적용하여 모델이 특징을 잘 학습하도록 도와주는 손실함수를 구현한 프로젝트입니다.
+기본적인 CE Loss에 GradCAM++을 적용하여 모델이 특징을 잘 학습하도록 도와주는 손실함수를 구현한 프로젝트입니다.
 
 
-## GradLoss 적용 예제
+## Example
 
 ```python
-import torch
-import torchvision.models as models
-from gradloss import GradLoss
-
-model = models.resnet18(pretrained=True)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
-
-# GradCAM 대상 레이어 지정 후 손실 초기화
-target_layers = [model.layer4[-1]]
 criterion = GradLoss(
-    target_layers=target_layers,
-    lambda_obj=1.0,     # 객체 반응 보상 가중치
-    lambda_noobj=1.0,   # 배경 억제 가중치
-    alpha=0.5,          # attention threshold
-    tau=10.0,           # soft-threshold 날카로움
-    ce_weight=1.0,      # CE loss 가중치
-    attn_weight=0.5,    # attention loss 가중치
+    target_layer=model.layer4[-1], # Attention 추적 레이어 직접 지정 (필수, None이면 에러)
+    tau=5.0,                       # GradLoss내부 σ 민감도 (default: 5)
+    ce_weight=1.0,                 # CE loss 가중치
+    attn_weight=0.5,               # attention loss 가중치
+    eps=1e-6,                      # 수치 안정화 항 (default: 1e-6)
 )
 
-logits = model(images)
-loss = criterion(model, images, logits, labels, masks)
+loss = criterion(model, images, labels, masks) # segmentation mask 필요 (B,H,W, 0/1)
 loss.backward()
 ```

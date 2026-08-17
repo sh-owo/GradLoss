@@ -1,0 +1,3 @@
+name: pet
+root: ./data
+num_classes: 37

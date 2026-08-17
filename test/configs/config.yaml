@@ -1,0 +1,15 @@
+defaults:
+  - model: resnet18
+  - dataset: cub
+  - trainer: default
+  - _self_
+
+hydra:
+  run:
+    dir: runs/experiment/${model.name}/${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}
+  output_subdir: .hydra
+  job:
+    chdir: true
+  job_logging:
+    root:
+      handlers: [console]

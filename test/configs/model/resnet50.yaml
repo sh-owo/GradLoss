@@ -1,0 +1,3 @@
+name: resnet50
+arch: resnet50
+pretrained: false
