@@ -75,6 +75,8 @@ class GradLoss(nn.Module):
             ).squeeze(1)
             masks = (masks > 0).float()
 
+        assert (masks.sum(dim=(1, 2)) > 0).all(), "Masks must contain at least one object pixel"
+
         M_obj = masks
         not_obj = 1.0 - M_obj
 
